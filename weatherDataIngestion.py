@@ -20,7 +20,7 @@ def read_config():
 def connect_db(db_name):
     return sqlite3.connect(db_name)
 
-# Insert or get the station_id from station_codes table based on the filename
+# Insert or get the stationId from weather_station table based on the filename
 def get_station_id(cursor, file_name):
     cursor.execute('''
     INSERT OR IGNORE INTO weather_station (stationCode) 
@@ -28,7 +28,7 @@ def get_station_id(cursor, file_name):
     ''', (file_name,))
     cursor.connection.commit()
 
-    # Get the station_id for the file
+    # Get the stationId for the file
     cursor.execute('''
     SELECT stationId FROM weather_station WHERE stationCode = ?
     ''', (file_name,))
@@ -77,6 +77,7 @@ def ingest_data_from_file(cursor, file_path, stationId):
     logger.info(f"{records_ingested} records ingested from {file_path}.")
 
     return records_ingested
+    
 # Calculate the yearly statistics (average max temp, average min temp, total precipitation)
 def analyse_yearly_weather(cursor, stationId):
     cursor.execute('''
@@ -99,7 +100,7 @@ def analyse_yearly_weather(cursor, stationId):
 
     cursor.connection.commit()
 
-# Process all files in the folder
+# Process all files in the folder and call yearly analysis method
 def process_files_in_folder(cursor, folder_path):
     total_records_ingested = 0
     for filename in os.listdir(folder_path):
